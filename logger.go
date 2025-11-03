@@ -19,7 +19,10 @@ var fallbackLogger logr.Logger
 var DefaultLogger logr.Logger
 
 func init() {
-	DefaultLogger = logr.FromSlogHandler(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.Level(VTrace)}))
+	DefaultLogger = logr.FromSlogHandler(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.Level(VTrace),
+		ReplaceAttr: ReplaceTimeAttr,
+	}))
 	fallbackLogger = DefaultLogger.WithName("fallback-logger")
 }
 
