@@ -43,6 +43,41 @@ func RunContext(ctx context.Context) {
 }
 ```
 
+### Logger options
+To set custom options, pass the wanted log level and ReplaceAttr function in the `options` parameter when creating the logger:
+
+**NOTE: the conversion between slog and logr levels results in negating the level, slog levels are more verbose the more negative the number, so here we use the library's constants negated to set the slog level, which lets us have the expected behaviour when using these constants in code.**
+
+```go
+package main
+
+import (
+	"context"
+	"log/slog"
+
+	"github.com/go-logr/logr"
+	logf "github.com/sdcio/logger"
+)
+
+func main() {
+	slogOpts := &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+		ReplaceAttr: logf.ReplaceTimeAttr,
+	}
+
+	if debug {
+		slogOpts.Level = slog.Level(-logf.VDebug)
+	}
+	if trace {
+		slogOpts.Level = slog.Level(-logf.VTrace)
+	}
+
+	log := logr.FromSlogHandler(slog.NewJSONHandler(os.Stdout, slogOpts))
+	logf.SetDefaultLogger(log)
+}
+```
+
+
 ## Join us
 
 Have questions, ideas, bug reports or just want to chat? Come join [our discord server](https://discord.com/channels/1240272304294985800/1311031796372344894).
